@@ -57,7 +57,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
     });
   }
 
-  // Завантаження окремого файлу з підтримкою timeout та повторів
   void _startDownload(DownloadFile file) async {
     setState(() {
       final index = _files.indexWhere((f) => f.id == file.id);
@@ -76,7 +75,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
     final controller = StreamController<double>();
     _controllers[file.id] = controller;
 
-    // Створюємо стрім з таймаутом на відсутність активності (наприклад, 4 секунди)
     final stream = _api
         .downloadFileStream(file.id, controller: controller)
         .timeout(
@@ -100,7 +98,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
         });
       },
       onError: (error) async {
-        // Повторна спроба автоматично один раз при помилці
         if (!mounted) return;
 
         // Закриваємо старий контролер
@@ -133,7 +130,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
     );
   }
 
-  // Скасування завантаження
   void _cancelDownload(DownloadFile file) {
     _subscriptions[file.id]?.cancel();
     _controllers[file.id]?.close();
@@ -154,7 +150,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
   void _downloadAll() async {
     final pendingFiles = _files.where((f) => f.status != FileStatus.success);
 
-    // Використовуємо Future.wait для паралельного запуску
     await Future.wait(
       pendingFiles.map((file) async {
         _startDownload(file);
@@ -164,7 +159,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
 
   @override
   void dispose() {
-    // Обов'язкове закриття всіх підписок і контролерів
     for (var sub in _subscriptions.values) {
       sub.cancel();
     }
@@ -190,7 +184,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
       body: FutureBuilder<List<DownloadFile>>(
         future: _filesFuture,
         builder: (context, snapshot) {
-          // 1. Стан завантаження початкових даних
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -214,7 +207,6 @@ class _DownloadScreenState extends State<DownloadScreen> {
               ),
             );
           }
-          // 3. Стану порожніх даних
           if (_files.isEmpty) {
             return const Center(child: Text('Список файлів порожній'));
           }
