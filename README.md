@@ -1,17 +1,38 @@
-# practice8
+# Practice: Варіант 4 - "Менеджер завантажень"
 
-A new Flutter project.
+---
 
-## Getting Started
+## Опис застосунку та функціонал
 
-This project is a starting point for a Flutter application.
+Застосунок реалізує інтерфейс менеджера завантажень із підтримкою наступних можливостей:
 
-A few resources to get you started if this is your first Flutter project:
+1. Початкове завантаження: Список із 5-7 файлів асинхронно завантажується з імітованого "сервера".
+2. Прогрес завантаження Кожен файл має власний індикатор виконання у відсотках та графічну смугу прогресу.
+3. Керування процесом: Можливість запускати завантаження окремих файлів, натискати кнопку "Завантажити всі" або скасовувати поточне завантаження з поверненням файлу у початковий стан.
+4. Обробка збоїв і тайм-аути: Імітація випадкових серверних помилок, обробка тайм-аутів та механізми захисту від збоїв.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Де в коді реалізовано ключові механізми
+
+- Future.wai:
+  - Використовується в методі downloadAll() у файлі lib/screens/download_screen.dart для одночасного запуску завантаження всіх незавершених файлів. Помилка одного файлу ізольована і не зупиняє завантаження інших.
+- Stream.timeout та повторні спроби:
+  - Реалізовано у стрімі завантаження, що дозволяє відстежувати зависання з'єднання та обробляти помилки.
+- Управління життєвим циклом та закриття:
+  - Усі активні підписки та контролери обов'язково закриваються в методі dispose() класу \_DownloadScreenState, що запобігає витокам пам'яті та помилкам у консолі під час виходу з екрана.
+  - Перед оновленням стану всюди використовується перевірка if (!mounted) return;.
+
+---
+
+## Інструкція запуску
+
+Встановіть усі залежності проєкту:
+
+- ```bash
+  flutter pub get
+  ```
+- Відкрити проект.
+- Перейти з No Device на Start Medium Phone API 35 mobile emulator (cold boot).
+- Створити новий термінал.
+- Ввести команду futter run.
